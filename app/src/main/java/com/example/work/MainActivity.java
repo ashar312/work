@@ -32,6 +32,7 @@ import com.google.android.gms.location.SettingsClient;
 import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.OnMapReadyCallback;
+import com.google.android.gms.maps.SupportMapFragment;
 import com.google.android.gms.maps.model.BitmapDescriptorFactory;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.Marker;
@@ -61,12 +62,12 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
     private String mLastUpdateTime;
 
     // location updates interval - 10sec
-    private static final long UPDATE_INTERVAL_IN_MILLISECONDS = 10000;
+    private static final long UPDATE_INTERVAL_IN_MILLISECONDS = 5000;
 
     // fastest updates interval - 5 sec
     // location updates will be received if another app is requesting the locations
     // than your app can handle
-    private static final long FASTEST_UPDATE_INTERVAL_IN_MILLISECONDS = 5000;
+    private static final long FASTEST_UPDATE_INTERVAL_IN_MILLISECONDS = 2000;
 
     private static final int REQUEST_CHECK_SETTINGS = 100;
 
@@ -87,6 +88,10 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+
+        SupportMapFragment mapFragment = (SupportMapFragment) getSupportFragmentManager()
+                .findFragmentById(R.id.map);
+        mapFragment.getMapAsync(this);
 
         ButterKnife.bind(this);
 
@@ -159,14 +164,12 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
             //yahan per current location aigi.
             LatLng pos = new LatLng(mCurrentLocation.getLatitude(), mCurrentLocation.getLongitude());
             if (UserMarker == null) {
-
                 UserMarker = googleMap.addMarker(new MarkerOptions().position(pos).title("Your Location"));
             }
             UserMarker.setPosition(pos);
+            googleMap.animateCamera(CameraUpdateFactory.newLatLngZoom(pos, 15.0f));
             Toast.makeText(this, mCurrentLocation.getLatitude() + "," + mCurrentLocation.getLongitude(), Toast.LENGTH_SHORT).show();
         }
-
-        toggleButtons();
     }
 
     @Override
